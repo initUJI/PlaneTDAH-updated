@@ -33,14 +33,15 @@ public class FinishTheSession : MonoBehaviour
         pointsExcelente = 300;
 
         //Se implementa el evento para continuar y salir al menú principal
-        string colorCode = "#ff0000ff";
+        string colorCode = "#ff6600";
         panel_UI.transform.Find("Buttons/ContinueButton").GetComponent<Button>().onClick.AddListener(() => continueButton());
         panel_UI.transform.Find("Buttons/ContinueButton/Title").GetComponent<Text>().text = "Continuar";
 
         //Mostrando informacion del trascurso de la sesion
         panel_UI.transform.Find("Information/PuntosTotal").GetComponent<Text>().text = "Puntos actuales: " + sessionManager.puntosTotales + " Puntos";
-        
-        if(DataManager.instancia != null && DataManager.instancia.ultimaPuntuacion != 0)
+
+        //if(DataManager.instancia != null && DataManager.instancia.ultimaPuntuacion != 0)
+        if (DataManager.instancia != null)
         {
             panel_UI.transform.Find("Information/TiempoTotal").GetComponent<Text>().text = "Puntos anterior partida: " + "<color=" + colorCode + ">" + DataManager.instancia.ultimaPuntuacion + "</color>" + " Puntos";
 
@@ -78,6 +79,6 @@ public class FinishTheSession : MonoBehaviour
         sessionManager.clearData();
         sessionManager.clearSuccesionList();
 
-        SceneManager.LoadScene("Graffiti");
+        SceneManager.LoadScene("Graffiti_New");
     }
 }

@@ -131,20 +131,24 @@ public class GameManagerScript : MonoBehaviour
                 string resultadoPrueba = "";
                 if(puntosTotales >= 360)
                 {
-                    resultadoPrueba = "¡Excelente!";
+                    resultadoPrueba = "¡Los estás haciendo excelente!";
                     SessionManager.instance.SumarPuntosAlTotal(100);
 
                 }
                 else if(puntosTotales >= 200)
                 {
-                    resultadoPrueba = "Bien";
+                    resultadoPrueba = "¡Vas mejorando!";
                     SessionManager.instance.SumarPuntosAlTotal(50);
 
                 }
+                else if (puntosTotales >= 1)
+                {
+                    resultadoPrueba = "¡Ánimo! ¡Sigue así!";
+                    SessionManager.instance.SumarPuntosAlTotal(25);
+                }
                 else
                 {
-                    resultadoPrueba = "¡Ánimo!";
-                    SessionManager.instance.SumarPuntosAlTotal(25);
+                    resultadoPrueba = "¡Vuelve a intentarlo! ¡Tu puedes!";
                 }
 
                 //Se prepara la Interfaz
@@ -156,7 +160,7 @@ public class GameManagerScript : MonoBehaviour
 
                 //Editando texto de resultado
                 finishingPanel.transform.Find("Panel/Information/PointsText").gameObject.GetComponent<Text>().text = "";
-                finishingPanel.transform.Find("Panel/Information/PointsText/ResolutionText").gameObject.GetComponent<Text>().text = "¡Excelente!";
+                finishingPanel.transform.Find("Panel/Information/PointsText/ResolutionText").gameObject.GetComponent<Text>().text = resultadoPrueba;
 
                 //Editando texto de resultado adicional
                 finishingPanel.transform.Find("Panel/Information/AdditionalText").gameObject.GetComponent<Text>().text = "Aros recogidos: " + (puntosTotales / 10);

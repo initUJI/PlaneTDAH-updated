@@ -22,10 +22,10 @@ public class Painting_GameManager : MonoBehaviour
     public float gameplayTime, totalTimeToGo;
     public float totalPointsToDo, totalPointsDone;
 
-    private float lerpDuration = 1; 
+    private float lerpDuration = 1;
     private float startTime, speed, journeyLength;
     private Color colorToPaint;
-    public  P3dPaintSphere sprayManager;
+    public P3dPaintSphere sprayManager;
     public AudioSource sprayAudio;
     public Material plasticSprayMaterial;
 
@@ -36,6 +36,9 @@ public class Painting_GameManager : MonoBehaviour
     public AudioClip errorSound;
     private int paintErrors = 0;
     public int figuresDone;
+
+    [SerializeField]
+    private Image _graffiti;
 
     public Color userColor, objectiveColor;
 
@@ -54,9 +57,9 @@ public class Painting_GameManager : MonoBehaviour
         speed = 2;
 
 
-        colorToPaint = new Color(0,0,0,0);
+        colorToPaint = new Color(0, 0, 0, 0);
         sprayManager.Color = colorToPaint;
-        IniciarPartida(); 
+        IniciarPartida();
     }
 
     private void IniciarPartida()
@@ -66,7 +69,8 @@ public class Painting_GameManager : MonoBehaviour
             //El jugador no se encuentra en una session
             difficultMode = "Easy";
             totalTimeToGo = 120;
-        }else
+        }
+        else
         {
             //El jugador se encuentra en una sesion
             MinijuegoLevel thisLevel = SessionManager.instance.sucesionDeJuegos[0];
@@ -92,7 +96,7 @@ public class Painting_GameManager : MonoBehaviour
 
     void Update()
     {
-        if(playing)
+        if (playing)
         {
             EjecutarRaycast();
             AnimarSpray();
@@ -100,7 +104,7 @@ public class Painting_GameManager : MonoBehaviour
             if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began || Input.GetMouseButton(0))
             {
                 //Si el puntero está encima de un boton no llega a pintar
-                #if UNITY_EDITOR
+#if UNITY_EDITOR
                 if (EventSystem.current.IsPointerOverGameObject())
                 {
                     return;
@@ -114,7 +118,8 @@ public class Painting_GameManager : MonoBehaviour
                 if (EventSystem.current.IsPointerOverGameObject(0))
                 {
                     return;
-                }else
+                }
+                else
                 {
                     StartPainting();
                 }
@@ -129,14 +134,20 @@ public class Painting_GameManager : MonoBehaviour
         }
     }
 
+    public void f_finishgGame()
+    {
+        gameplayTime = 120;
+    }
+
     private void ComprobarFinalDeJuego()
     {
-        if(gameplayTime >= totalTimeToGo || (totalPointsDone/totalPointsToDo) >= 1)
+        if (gameplayTime >= totalTimeToGo || (totalPointsDone / totalPointsToDo) >= 1)
         {
             playing = false;
             FinishPainting();
 
             GetComponent<UI_InGame_Manager>().setPauseButtonState(false);
+            GetComponent<UI_InGame_Manager>().setSaveButtonState(false);
             finishingPanel.SetActive(true);
 
             LeanTween.scale(finishingPanel, new Vector3(1, 1, 1), 1);
@@ -144,7 +155,7 @@ public class Painting_GameManager : MonoBehaviour
             //Fill the panel with information
 
             int percentage = (int)((totalPointsDone / totalPointsToDo) * 100);
-            
+
 
             //Make the buttons functional
             //finishingPanel.transform.Find("Panel/Buttons/MenuButton").gameObject.GetComponent<Button>().onClick.AddListener(() => gameObject.GetComponent<UI_InGame_Manager>().exitButtonPressed());
@@ -171,10 +182,10 @@ public class Painting_GameManager : MonoBehaviour
             }
             else
             {
-                int totalDone = (int) (totalPointsDone / totalPointsToDo) * 100;
+                int totalDone = (int)(totalPointsDone / totalPointsToDo) * 100;
 
                 SessionManager.instance.SumarTiempoAlTotal((int)gameplayTime);
-                
+
                 string resultadoPrueba = "";
                 if (totalDone >= 75)
                 {
@@ -225,9 +236,10 @@ public class Painting_GameManager : MonoBehaviour
 
     private void ActualizarTiempoGameplay()
     {
+
         gameplayTime += Time.deltaTime;
         float timeToShow = totalTimeToGo - gameplayTime;
-        if(timeToShow <= 0)
+        if (timeToShow <= 0)
         {
             timeToShow = 0;
         }
@@ -239,10 +251,10 @@ public class Painting_GameManager : MonoBehaviour
         if (startTime > lerpDuration)
             return;
 
-        if(nearOfTheWall)
+        if (nearOfTheWall)
         {
             float fractionOfJourney = startTime / lerpDuration;
-            
+
             sprayModel.localPosition = Vector3.Lerp(sprayModel.localPosition, new Vector3(0, -0.01f, 0.26f), fractionOfJourney);
             startTime += speed * Time.deltaTime;
         }
@@ -258,7 +270,7 @@ public class Painting_GameManager : MonoBehaviour
     private void EjecutarRaycast()
     {
         RaycastHit hit;
-        
+
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, distance))
         {
             if (hit.collider.tag == "Drawable")
@@ -270,18 +282,19 @@ public class Painting_GameManager : MonoBehaviour
 
                 nearOfTheWall = true;
                 return;
-            }else if(hit.collider.tag == "dirtyPoint")
+            }
+            else if (hit.collider.tag == "dirtyPoint")
             {
                 if (!nearOfTheWall)
                 {
                     startTime = 0;
                 }
                 nearOfTheWall = true;
-                
+
                 if (painting)
                 {
                     GroupOfPoints actualGroup = hit.collider.transform.parent.gameObject.GetComponent<GroupOfPoints>();
-                    if(sprayManager.Color == actualGroup.colorToPaint)
+                    if (sprayManager.Color == actualGroup.colorToPaint)
                     {
                         totalPointsDone++;
                         actualGroup.siguientePunto();
@@ -291,7 +304,7 @@ public class Painting_GameManager : MonoBehaviour
                 return;
             }
         }
-        if(nearOfTheWall)
+        if (nearOfTheWall)
         {
             nearOfTheWall = false;
             startTime = 0;
@@ -338,7 +351,7 @@ public class Painting_GameManager : MonoBehaviour
 
     public void StartPainting()
     {
-        if(!painting)
+        if (!painting)
         {
             painting = true;
             cameraPointer.localPosition = new Vector3(0, 0, 50);
@@ -351,5 +364,29 @@ public class Painting_GameManager : MonoBehaviour
         sprayManager.Color = newColor;
         plasticSprayMaterial.color = newColor;
         userColor = newColor;
+    }
+
+    //Assets/Models/Materials/Textures/EmptyTexture.png
+    public void f_saveGraffiti()
+    {
+        string name = "Captura_Graffiti_Pipes_" + System.DateTime.Now.ToString("yyyy-MM-dd_HH:mm:ss") + ".png";
+        Texture2D image = finishingPanel.transform.parent.GetComponent<Painting_Interface_Manager>().copyTextureToImage().texture;
+        NativeGallery.SaveImageToGallery(image, "Mis Grafittis", name, (success, path) => _ShowAndroidToastMessage("Media save result: The Graffiti " + (success ? "was successfully saved in " + path : "could NOT be saved.")));
+    }
+
+    private void _ShowAndroidToastMessage(string message)
+    {
+        AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+        AndroidJavaObject unityActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+
+        if (unityActivity != null)
+        {
+            AndroidJavaClass toastClass = new AndroidJavaClass("android.widget.Toast");
+            unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
+            {
+                AndroidJavaObject toastObject = toastClass.CallStatic<AndroidJavaObject>("makeText", unityActivity, message, 0);
+                toastObject.Call("show");
+            }));
+        }
     }
 }

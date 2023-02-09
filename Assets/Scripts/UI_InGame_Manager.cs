@@ -9,6 +9,7 @@ public class UI_InGame_Manager : MonoBehaviour
     public GameObject pausePanel;
 
     public GameObject pauseButton;
+    public GameObject _saveButton;
     public GameObject exitButton;
     public GameObject continueButton;
 
@@ -33,6 +34,11 @@ public class UI_InGame_Manager : MonoBehaviour
         }
     }
 
+    public void setSaveButtonState(bool newState)
+    {
+        _saveButton.SetActive(newState);
+    }
+
     public void setPauseButtonState(bool newState)
     {
         pauseButton.SetActive(newState);
@@ -48,7 +54,7 @@ public class UI_InGame_Manager : MonoBehaviour
     {
         Time.timeScale = 1;
 
-        if(SessionManager.instance != null)
+        if (SessionManager.instance != null)
             SessionManager.instance.clearSuccesionList();
 
         SceneManager.LoadScene("MainMenu");

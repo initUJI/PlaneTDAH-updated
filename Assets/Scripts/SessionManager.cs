@@ -8,7 +8,7 @@ public class SessionManager : MonoBehaviour
 {
     public static SessionManager instance;
     public List<MinijuegoLevel> sucesionDeJuegos;
-    public int totalGamesInSession;
+    public int totalGamesInSession = 3;
     public bool playingSession = false;
 
     public int puntosTotales, tiempoTotal, puntosAConseguir;

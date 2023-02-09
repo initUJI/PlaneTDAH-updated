@@ -28,16 +28,18 @@ public class AirPlaneController : MonoBehaviour
         if(gameManager.hasStarted)
         {
             //Se recoge el Input
-            #if UNITY_EDITOR
-            Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
-            #elif UNITY_ANDROID
-            Vector3 movement = new Vector3(Input.acceleration.x * (movementMultiplier * 2), Input.acceleration.z * movementMultiplier, 0);
-            #endif
+            Vector3 movement = Vector3.zero;
 
+            rigid.velocity = Vector3.zero;
             //Se le da movimiento al Avión en caso de que esté dentro de los limites de la pantalla
             if (bottomLimit <= transform.position.y && transform.position.y <= topLimit &&
                 leftLimit <= transform.position.x && transform.position.x <= rightLimit)
             {
+#if UNITY_EDITOR
+                movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+#elif UNITY_ANDROID
+                movement = new Vector3(Input.acceleration.x * (movementMultiplier * 2), Input.acceleration.z * movementMultiplier, 0);
+#endif
                 rigid.velocity = movement * planeSpeed * Time.deltaTime;
             }
             //En caso de que se salga por alguno de los 4 limites (bordes de la pantalla)
@@ -65,8 +67,8 @@ public class AirPlaneController : MonoBehaviour
             transform.eulerAngles = AngleLerp(transform.eulerAngles, rotationVector, Time.deltaTime * rotationSpeed);
         }else
         {
-            transform.eulerAngles = new Vector3(0, 0, 0);
-            rigid.velocity = new Vector3(0, 0, 0);
+            transform.eulerAngles = Vector3.zero;
+            rigid.velocity = Vector3.zero;
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using System;
@@ -14,7 +15,7 @@ public class ARTapToPlace : MonoBehaviour
     public Painting_GameManager minigame_manager;
 
     public bool hasBeenPlaced;
-    
+
     private ARSessionOrigin arOrigin;
     private Pose PlacementPose;
     private ARRaycastManager aRRaycastManager;
@@ -25,9 +26,9 @@ public class ARTapToPlace : MonoBehaviour
         arOrigin = FindObjectOfType<ARSessionOrigin>();
         hasBeenPlaced = false;
 
-        #if UNITY_ANDROID
+#if UNITY_ANDROID
         aRRaycastManager = FindObjectOfType<ARRaycastManager>();
-        #endif
+#endif
 
         quadInScreen = placementIndicator.GetComponentInChildren<MeshRenderer>();
     }
@@ -37,7 +38,7 @@ public class ARTapToPlace : MonoBehaviour
         UpdatePlacementPose();
         UpdatePlacementIndicator();
 
-        if(placementPoseIsValid && Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+        if (placementPoseIsValid && Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
             PlaceObject();
         }
@@ -45,7 +46,7 @@ public class ARTapToPlace : MonoBehaviour
 
     private void PlaceObject()
     {
-        if(!hasBeenPlaced)
+        if (!hasBeenPlaced)
         {
             Instantiate(objectToPlace, PlacementPose.position, PlacementPose.rotation);
 
@@ -68,18 +69,21 @@ public class ARTapToPlace : MonoBehaviour
         }
     }
 
+
+
     private void UpdatePlacementPose()
     {
         var screenCenter = Camera.current.ViewportToScreenPoint(new Vector3(0.5f, 0.5f));
+        // var screenCenter = new Vector3(0.5f, 0.5f);
         var hits = new List<ARRaycastHit>();
 
-        #if UNITY_IOS
+#if UNITY_IOS
 		arOrigin.GetComponent<ARRaycastManager>().Raycast(screenCenter, hits, TrackableType.Planes);
-        #endif
+#endif
 
-        #if UNITY_ANDROID
+#if UNITY_ANDROID
         aRRaycastManager.Raycast(screenCenter, hits, TrackableType.Planes);
-        #endif
+#endif
 
         placementPoseIsValid = hits.Count > 0;
         if (placementPoseIsValid)
