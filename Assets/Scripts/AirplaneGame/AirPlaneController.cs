@@ -28,47 +28,22 @@ public class AirPlaneController : MonoBehaviour
         if(gameManager.hasStarted)
         {
             //Se recoge el Input
-            Vector3 movement = Vector3.zero;
-
-            rigid.velocity = Vector3.zero;
-            //Se le da movimiento al Avión en caso de que esté dentro de los limites de la pantalla
-            if (bottomLimit <= transform.position.y && transform.position.y <= topLimit &&
-                leftLimit <= transform.position.x && transform.position.x <= rightLimit)
-            {
+            Vector3 _movement = Vector3.zero;
 #if UNITY_EDITOR
-                movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+            _movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
 #elif UNITY_ANDROID
-                movement = new Vector3(Input.acceleration.x * (movementMultiplier * 2), Input.acceleration.z * movementMultiplier, 0);
+            _movement = new Vector3(Input.acceleration.x * (movementMultiplier * 2), Input.acceleration.z * movementMultiplier, 0);
 #endif
-                rigid.velocity = movement * planeSpeed * Time.deltaTime;
-            }
-            //En caso de que se salga por alguno de los 4 limites (bordes de la pantalla)
-            else if (transform.position.y < bottomLimit)
-            {
-                transform.position = new Vector3(transform.position.x, bottomLimit + .5f, transform.position.z);
-            }
-            else if (transform.position.y > topLimit)
-            {
-                transform.position = new Vector3(transform.position.x, topLimit - .5f, transform.position.z);
-            }
-            else if (transform.position.x < leftLimit)
-            {
-                transform.position = new Vector3(leftLimit + .5f, transform.position.y, transform.position.z);
-            }
-            else if (transform.position.x > rightLimit)
-            {
-                transform.position = new Vector3(rightLimit - 0.5f, transform.position.y, transform.position.z);
-            }
+            
+            Vector3 _velocityInAxis = _movement * planeSpeed * Time.deltaTime;
 
             //Se rota el avión en la direccion en la que se está moviendo
-            Vector3 rotationVector = new Vector3(rigid.velocity.normalized.y * rotationMagnitude, 0, rigid.velocity.normalized.x * rotationMagnitude);
-            //Debug.Log("Vector is ( " + rigid.velocity.x + " , " + rigid.velocity.y + " )");
+            rigid.velocity = _velocityInAxis;
+            transform.position = new Vector3(Mathf.Clamp(transform.position.x, leftLimit + .5f, rightLimit - 0.5f), Mathf.Clamp(transform.position.y, bottomLimit + .5f, topLimit - .5f), transform.position.z);
 
-            transform.eulerAngles = AngleLerp(transform.eulerAngles, rotationVector, Time.deltaTime * rotationSpeed);
-        }else
-        {
-            transform.eulerAngles = Vector3.zero;
-            rigid.velocity = Vector3.zero;
+            Vector3 _rotationVector = new Vector3(rigid.velocity.normalized.y * rotationMagnitude, 0, rigid.velocity.normalized.x * rotationMagnitude);
+
+            transform.eulerAngles = AngleLerp(transform.eulerAngles, _rotationVector, Time.deltaTime * rotationSpeed);
         }
     }
 
