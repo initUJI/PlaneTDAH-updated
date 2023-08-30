@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -31,7 +32,7 @@ public class GameManagerScript : MonoBehaviour
         if (SessionManager.instance == null || (SessionManager.instance != null && SessionManager.instance.playingSession == false))
         {
             //El jugador no se encuentra en una session
-            matchDurationTime = 60;
+            matchDurationTime = 120;
             totalRingsToCatch = 200;
             mode = "Easy";
             skyboxManager.actualizarEscenario("Easy");
@@ -50,19 +51,19 @@ public class GameManagerScript : MonoBehaviour
             switch (mode)
             {
                 case "Easy":
-                    matchDurationTime = 60;
+                    matchDurationTime = 120;
                     totalRingsToCatch = 200;
                     skyboxManager.actualizarEscenario(mode);
                     break;
 
                 case "Medium":
-                    matchDurationTime = 60;
+                    matchDurationTime = 120;
                     totalRingsToCatch = 200;
                     skyboxManager.actualizarEscenario(mode);
                     break;
 
                 case "Hard":
-                    matchDurationTime = 60;
+                    matchDurationTime = 120;
                     totalRingsToCatch = 200;
                     skyboxManager.actualizarEscenario(mode);
                     break;
@@ -79,6 +80,7 @@ public class GameManagerScript : MonoBehaviour
         {
             ActualizarTiempoPartida();
             ComprobarFinalPartida();
+            f_writePoints();
         }
     }
 
@@ -100,14 +102,15 @@ public class GameManagerScript : MonoBehaviour
 
             if (SessionManager.instance == null || (SessionManager.instance != null && SessionManager.instance.playingSession == false))
             {
-                finishingPanel.transform.Find("Panel/Title").gameObject.GetComponent<Text>().text = "¡Práctica terminada!";
+                finishingPanel.transform.Find("Panel/Title").gameObject.GetComponent<Text>().text = LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "endText");
 
                 //Editando texto de resultado
                 finishingPanel.transform.Find("Panel/Information/PointsText").gameObject.GetComponent<Text>().text = "";
-                finishingPanel.transform.Find("Panel/Information/PointsText/ResolutionText").gameObject.GetComponent<Text>().text = "¡Excelente!";
+                finishingPanel.transform.Find("Panel/Information/PointsText/ResolutionText").gameObject.GetComponent<Text>().text = LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "excellent");
 
                 //Editando texto de resultado adicional
-                finishingPanel.transform.Find("Panel/Information/AdditionalText").gameObject.GetComponent<Text>().text = "Aros recogidos: " + (puntosTotales / 10);
+                finishingPanel.transform.Find("Panel/Information/AdditionalText").gameObject.GetComponent<Text>().text = LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "dataText") + " " + (puntosTotales / 10);
+                
                 finishingPanel.transform.Find("Panel/Information/PointsText").gameObject.GetComponent<Text>().text = "";
 
                 //Editando texto de puntos
@@ -116,7 +119,7 @@ public class GameManagerScript : MonoBehaviour
 
                 //Editando las funciones de los botones
                 finishingPanel.transform.Find("Panel/Buttons/NextButton").gameObject.GetComponent<Button>().onClick.AddListener(() => gameObject.GetComponent<UI_InGame_Manager>().exitButtonPressed());
-                finishingPanel.transform.Find("Panel/Buttons/NextButton/Information2").GetComponent<Text>().text = "Menu";
+                finishingPanel.transform.Find("Panel/Buttons/NextButton/Information2").GetComponent<Text>().text = LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "menu");
             }
             else
             {
@@ -131,24 +134,24 @@ public class GameManagerScript : MonoBehaviour
                 string resultadoPrueba = "";
                 if(puntosTotales >= 360)
                 {
-                    resultadoPrueba = "¡Los estás haciendo excelente!";
+                    resultadoPrueba = LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "highResultText");
                     SessionManager.instance.SumarPuntosAlTotal(100);
 
                 }
                 else if(puntosTotales >= 200)
                 {
-                    resultadoPrueba = "¡Vas mejorando!";
+                    resultadoPrueba = LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "midResultText");
                     SessionManager.instance.SumarPuntosAlTotal(50);
 
                 }
                 else if (puntosTotales >= 1)
                 {
-                    resultadoPrueba = "¡Ánimo! ¡Sigue así!";
+                    resultadoPrueba = LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "lowResultText");
                     SessionManager.instance.SumarPuntosAlTotal(25);
                 }
                 else
                 {
-                    resultadoPrueba = "¡Vuelve a intentarlo! ¡Tu puedes!";
+                    resultadoPrueba = LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "failResultText");
                 }
 
                 //Se prepara la Interfaz
@@ -156,14 +159,15 @@ public class GameManagerScript : MonoBehaviour
 
                 //Editando titulo de la pantalla final
                 int completed = SessionManager.instance.totalGamesInSession - SessionManager.instance.sucesionDeJuegos.Count;
-                finishingPanel.transform.Find("Panel/Title").gameObject.GetComponent<Text>().text = "¡Terminado! " + completed + " / " + SessionManager.instance.totalGamesInSession;
+                finishingPanel.transform.Find("Panel/Title").gameObject.GetComponent<Text>().text = LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "endText")  + " " + completed + " / " + SessionManager.instance.totalGamesInSession;
+                // LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "finish");
 
                 //Editando texto de resultado
                 finishingPanel.transform.Find("Panel/Information/PointsText").gameObject.GetComponent<Text>().text = "";
                 finishingPanel.transform.Find("Panel/Information/PointsText/ResolutionText").gameObject.GetComponent<Text>().text = resultadoPrueba;
 
                 //Editando texto de resultado adicional
-                finishingPanel.transform.Find("Panel/Information/AdditionalText").gameObject.GetComponent<Text>().text = "Aros recogidos: " + (puntosTotales / 10);
+                finishingPanel.transform.Find("Panel/Information/AdditionalText").gameObject.GetComponent<Text>().text = LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "dataText") + " " + (puntosTotales / 10);
                 finishingPanel.transform.Find("Panel/Information/PointsText").gameObject.GetComponent<Text>().text = "";
 
                 //Editando texto de puntos
@@ -171,8 +175,9 @@ public class GameManagerScript : MonoBehaviour
 
                 //Editando las funciones de los botones y su texto correspondiente
                 finishingPanel.transform.Find("Panel/Buttons/NextButton").gameObject.GetComponent<Button>().onClick.AddListener(() => SessionManager.instance.chargeNextScene());
-                finishingPanel.transform.Find("Panel/Buttons/NextButton/Information2").GetComponent<Text>().text = "Siguiente";
-                
+                finishingPanel.transform.Find("Panel/Buttons/NextButton/Information2").GetComponent<Text>().text = LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "next");
+
+
             }
 
         }
@@ -191,7 +196,7 @@ public class GameManagerScript : MonoBehaviour
         {
             timeToShow = 0;
         }
-        textoTiempo.text = "Tiempo: " + Mathf.Floor(timeToShow).ToString("00");
+        textoTiempo.text = LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "time") + " " + Mathf.Floor(timeToShow).ToString("00");
     }
 
     IEnumerator StartCountdown()
@@ -219,10 +224,14 @@ public class GameManagerScript : MonoBehaviour
             puntosTotales += puntosASumar;
             anillasEnTotalJugadas++;
 
-
-            double percent = ((double)puntosTotales / (double)anillasEnTotalJugadas) * 10;
-            percent = Math.Truncate(percent);
-            textoPuntuacion.text = "Aros Recogidos: " + percent + " %";
+            f_writePoints();
         }
+    }
+
+    private void f_writePoints()
+    {
+        double percent = ((double)puntosTotales / (double)anillasEnTotalJugadas) * 10;
+        percent = Math.Truncate(percent);
+        textoPuntuacion.text = LocalizationSettings.StringDatabase.GetLocalizedString("UI Game Text", "dataText") + " " + percent + " %";
     }
 }

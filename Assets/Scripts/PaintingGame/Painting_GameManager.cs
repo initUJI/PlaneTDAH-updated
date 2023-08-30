@@ -162,7 +162,7 @@ public class Painting_GameManager : MonoBehaviour
 
             if (SessionManager.instance == null || (SessionManager.instance != null && SessionManager.instance.playingSession == false))
             {
-                finishingPanel.transform.Find("Panel/Title").gameObject.GetComponent<Text>().text = "¡Extra terminado!";
+                finishingPanel.transform.Find("Panel/Title").gameObject.GetComponent<Text>().text = "Extra finished!";
 
                 //Editando texto de resultado
                 //int paintedWall = (int)((totalPointsDone / totalPointsToDo) * 100);
@@ -189,19 +189,19 @@ public class Painting_GameManager : MonoBehaviour
                 string resultadoPrueba = "";
                 if (totalDone >= 75)
                 {
-                    resultadoPrueba = "¡Excelente!";
+                    resultadoPrueba = "Excellent!";
                     SessionManager.instance.SumarPuntosAlTotal(100);
 
                 }
                 else if (totalDone >= 40)
                 {
-                    resultadoPrueba = "Bien";
+                    resultadoPrueba = "Good";
                     SessionManager.instance.SumarPuntosAlTotal(50);
 
                 }
                 else
                 {
-                    resultadoPrueba = "¡Practica para mejorar!";
+                    resultadoPrueba = "Keep going to get better!";
                     SessionManager.instance.SumarPuntosAlTotal(25);
                 }
 
@@ -243,7 +243,7 @@ public class Painting_GameManager : MonoBehaviour
         {
             timeToShow = 0;
         }
-        timeText.text = "Tiempo: " + Mathf.Floor(timeToShow).ToString("00");
+        timeText.text = "Time left: " + Mathf.Floor(timeToShow).ToString("00");
     }
 
     private void AnimarSpray()
